@@ -1,6 +1,7 @@
 'use strict';
 
 const MAX_ROUNDS = 25;
+const CTX = document.getElementById('myChart');
 
 let rounds = 0;
 
@@ -88,6 +89,45 @@ function renderImages(parent, src, name) {
   parent.appendChild(img);
 }
 
+function renderChart() {
+  let labelProducts = [];
+  let views = [];
+  let likes = [];
+
+  products.forEach(prod => {
+    labelProducts.push(prod.name);
+    views.push(prod.view);
+    likes.push(prod.likes);
+  });
+
+  let config = {
+    type: 'bar',
+    data: {
+      labels: labelProducts,
+      datasets: [{
+        label: '# of Views',
+        data: views,
+        borderWidth: 1
+      },
+      {
+        label: '# of Votes',
+        data: likes,
+        borderWidth: 1
+      }
+      ],
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    }
+  };
+
+  new Chart(CTX, config);
+}
+
 //Event functions ---------------------------------------
 function productClick(event) {
   let productClicked = event.target.alt;
@@ -119,9 +159,9 @@ function renderResults() {
   });
 
   document.querySelector('button').remove();
+  renderChart();
 }
 
 //Executable ---------------------------------------
 renderProducts(products);
 imageContainer.addEventListener('click', productClick);
-
