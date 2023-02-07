@@ -26,6 +26,8 @@ let wineglass = new Products('wine-glass');
 
 let products = [bag, banana, bathroom, boots, breakfast, bubblegum, chair, cthulhu, dogduck, dragon, pen, petsweep, scissors, shark, sweep, tauntaun, unicorn, watercan, wineglass];
 
+let distinctProducts = [];
+
 //DOM windows ---------------------------------------
 let imageContainer = document.querySelector('#productImages');
 let resultsContainer = document.querySelector('#results ul');
@@ -43,34 +45,38 @@ function generateRandNum(products) {
   return Math.floor(Math.random() * products.length);
 }
 
-function randomThreeProd(products) {
+function generateProducts(products, count) {
   let result = [];
 
-  for (let i = 0; i < 3; i++) {
+  while (distinctProducts.length < count * 2) {
     let num = generateRandNum(products);
 
-    while (result.includes(num)) {
-      num = generateRandNum(products)
+    if (!distinctProducts.includes(num)) {
+      distinctProducts.push(num);
     }
-    result.push(num);
   }
+
+  for (let i = 0; i < count; i++) {
+    result.push(distinctProducts.shift());
+  }
+
   return result;
 }
 
 //Rendering functions ---------------------------------------
 function renderProducts(products) {
-  let randomProducts = randomThreeProd(products);
+  let randomProducts = generateProducts(products, 3);
 
   randomProducts.forEach(prod => {
     products[prod].view++;
     renderImages(imageContainer, products[prod].src, products[prod].name);
-  })
+  });
 }
 
 function renderResultButton() {
   let button = document.createElement('button');
   button.innerText = 'View Results';
-  imageContainer.insertAdjacentElement('afterend', button);
+  resultsContainer.insertAdjacentElement('beforebegin', button);
 
   button.addEventListener('click', renderResults);
 }
