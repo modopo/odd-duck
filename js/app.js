@@ -119,6 +119,3 @@ function renderResults() {
 renderProducts(products);
 imageContainer.addEventListener('click', productClick);
 
-
-
-
