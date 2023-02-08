@@ -2,6 +2,8 @@
 
 const MAX_ROUNDS = 25;
 const CTX = document.getElementById('myChart');
+let IMAGE_CONTAINER = document.querySelector('#productImages');
+let RESULT_CONTAINER = document.querySelector('#results ul');
 
 let rounds = 0;
 
@@ -30,8 +32,7 @@ let products = [bag, banana, bathroom, boots, breakfast, bubblegum, chair, cthul
 let distinctProducts = [];
 
 //DOM windows ---------------------------------------
-let imageContainer = document.querySelector('#productImages');
-let resultsContainer = document.querySelector('#results ul');
+
 
 //Object ---------------------------------------
 function Products(name, fileExt = 'jpg') {
@@ -46,7 +47,7 @@ function generateRandNum(products) {
   return Math.floor(Math.random() * products.length);
 }
 
-function generateProducts(products, count) {
+function pickRandomProducts(products, count) {
   let result = [];
 
   while (distinctProducts.length < count * 2) {
@@ -66,12 +67,14 @@ function generateProducts(products, count) {
 
 //Rendering functions ---------------------------------------
 function renderProducts(products) {
-  let randomProducts = generateProducts(products, 3);
+  let randomProducts = pickRandomProducts(products, 3);
 
   randomProducts.forEach(prod => {
     products[prod].view++;
     renderImages(imageContainer, products[prod].src, products[prod].name);
   });
+
+  saveProducts();
 }
 
 function renderResultButton() {
@@ -127,6 +130,13 @@ function renderChart() {
 
   new Chart(CTX, config);
 }
+
+//Save Settings
+function saveProducts() {
+  let stringify = JSON.stringify(products);
+  
+}
+
 
 //Event functions ---------------------------------------
 function productClick(event) {
