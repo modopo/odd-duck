@@ -158,7 +158,7 @@ function productClick(event) {
 
   if (rounds < MAX_ROUNDS) {
     while (IMAGE_CONTAINER.lastElementChild) {
-      IMAGE_CONTAINER.removeChild(IMAGE_CONTAINER.lastElementChild)
+      IMAGE_CONTAINER.removeChild(IMAGE_CONTAINER.lastElementChild);
     }
     renderProducts(products);
   } else {
@@ -170,7 +170,7 @@ function productClick(event) {
 function renderResults() {
   products.forEach(prod => {
     let li = document.createElement("li");
-    li.innerText = `${prod.name} has ${prod.likes} vote(s), and was seen ${prod.view} time(s).`
+    li.innerText = `${prod.name} has ${prod.likes} vote(s), and was seen ${prod.view} time(s).`;
     RESULT_CONTAINER.appendChild(li);
   });
 
