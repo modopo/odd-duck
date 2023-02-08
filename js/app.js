@@ -1,7 +1,6 @@
 'use strict';
 
 const MAX_ROUNDS = 25;
-const CTX = document.getElementById('myChart');
 
 let rounds = 0;
 
@@ -29,11 +28,12 @@ let products = [bag, banana, bathroom, boots, breakfast, bubblegum, chair, cthul
 
 let distinctProducts = [];
 
-//DOM windows ---------------------------------------
-let imageContainer = document.querySelector('#productImages');
-let resultsContainer = document.querySelector('#results ul');
+//DOM windows --------------------------------------------
+const CTX = document.getElementById('myChart');
+const IMAGE_CONTAINER = document.querySelector('#productImages');
+const RESULT_CONTAINER = document.querySelector('#results ul');
 
-//Object ---------------------------------------
+//Object -------------------------------------------------
 function Products(name, fileExt = 'jpg') {
   this.name = name;
   this.src = `img/${name}.${fileExt}`;
@@ -46,7 +46,7 @@ function generateRandNum(products) {
   return Math.floor(Math.random() * products.length);
 }
 
-function generateProducts(products, count) {
+function pickRandomProducts(products, count) {
   let result = [];
 
   while (distinctProducts.length < count * 2) {
@@ -64,20 +64,26 @@ function generateProducts(products, count) {
   return result;
 }
 
-//Rendering functions ---------------------------------------
-function renderProducts(products) {
-  let randomProducts = generateProducts(products, 3);
+//Rendering functions -------------------------------------
+function renderProducts() {
+  let getData = localStorage.getItem('productData');
+
+  if (getData) {
+    products = JSON.parse(getData);
+  }
+
+  let randomProducts = pickRandomProducts(products, 3);
 
   randomProducts.forEach(prod => {
     products[prod].view++;
-    renderImages(imageContainer, products[prod].src, products[prod].name);
+    renderImages(IMAGE_CONTAINER, products[prod].src, products[prod].name);
   });
 }
 
 function renderResultButton() {
   let button = document.createElement('button');
   button.innerText = 'View Results';
-  resultsContainer.insertAdjacentElement('beforebegin', button);
+  RESULT_CONTAINER.insertAdjacentElement('beforebegin', button);
 
   button.addEventListener('click', renderResults);
 }
@@ -128,7 +134,15 @@ function renderChart() {
   new Chart(CTX, config);
 }
 
-//Event functions ---------------------------------------
+//Save functions ------------------------------------------
+function saveProductData() {
+  let stringify = JSON.stringify(products);
+
+  localStorage.setItem('productData', stringify);
+}
+
+
+//Event functions -----------------------------------------
 function productClick(event) {
   let productClicked = event.target.alt;
 
@@ -136,17 +150,19 @@ function productClick(event) {
     if (prod.name === productClicked) {
       prod.likes++;
     }
-  })
+  });
 
   rounds++;
 
+  saveProductData();
+
   if (rounds < MAX_ROUNDS) {
-    while (imageContainer.lastElementChild) {
-      imageContainer.removeChild(imageContainer.lastElementChild)
+    while (IMAGE_CONTAINER.lastElementChild) {
+      IMAGE_CONTAINER.removeChild(IMAGE_CONTAINER.lastElementChild)
     }
     renderProducts(products);
   } else {
-    imageContainer.removeEventListener('click', productClick);
+    IMAGE_CONTAINER.removeEventListener('click', productClick);
     renderResultButton();
   }
 }
@@ -155,13 +171,13 @@ function renderResults() {
   products.forEach(prod => {
     let li = document.createElement("li");
     li.innerText = `${prod.name} has ${prod.likes} vote(s), and was seen ${prod.view} time(s).`
-    resultsContainer.appendChild(li);
+    RESULT_CONTAINER.appendChild(li);
   });
 
   document.querySelector('button').remove();
   renderChart();
 }
 
-//Executable ---------------------------------------
+//Executable ----------------------------------------------
 renderProducts(products);
-imageContainer.addEventListener('click', productClick);
+IMAGE_CONTAINER.addEventListener('click', productClick);
